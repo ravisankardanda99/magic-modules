@@ -1238,3 +1238,23 @@ func testAccNetappVolume_volumeExportPolicyWithSquashMode_switchMutipleExportRul
   }
   `, context)
 }
+
+func TestSuppressSquashModeDiff(t *testing.T) {
+    cases := map[string]struct {
+        Old      string
+        New      string
+        Expected bool
+    }{
+        "identical": {Old: "foo", New: "", Expected: true},
+        "different": {Old: "foo", New: "bar", Expected: false},
+    }
+
+    for name, tc := range cases {
+        t.Run(name, func(t *testing.T) {
+            if suppressSquashModeDiff("key", tc.Old, tc.New, nil) != tc.Expected {
+                t.Fatalf("Expected %v for %s vs %s", tc.Expected, tc.Old, tc.New)
+            }
+        })
+    }
+}
+
